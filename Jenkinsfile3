@@ -6,9 +6,7 @@ pipeline {
     tools {
         maven 'mavenJenkins'
     }
-
     stages {
-
         stage('Verificación SCM') {
           steps {
             script {
