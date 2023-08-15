@@ -1,5 +1,5 @@
 #FROM maven:3-alpine
-FROM maven:3.5-jdk-8-alpine
+FROM arm64v8/maven
 WORKDIR /appmavenjenkins
 ADD . /appmavenjenkins
 EXPOSE 3000
