@@ -52,16 +52,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonarQubeInt') {
                    withCredentials([string(credentialsId: 'sonar', variable: 'sonarLogin')]) {
-                      sh "${scannerHome}/bin/sonar-scanner \
-                      -Dsonar.projectKey=SJMA:Test \
-                      -Dsonar.projectName=simple-java-maven-app \
-                      -Dsonar.projectVersion=0.0.${env.BUILD_NUMBER} \
-                      -Dsonar.host.url=http://localhost:9000 \
-                      -Dsonar.sources=src/main/ \
-                      -Dsonar.tests=src/test/  \
-                      -Dsonar.language=java \
-                      -Dsonar.java.binaries=. \
-                      -Dsonar.login=${sonarLogin}"
+                      sh "${sonarqubeScannerHome}/bin/sonar-scanner -e -Dsonar.host.url=http://localhost:9000 -Dsonar.login=${sonarLogin} -Dsonar.projectName=simple-java-maven-app -Dsonar.projectVersion=${env.BUILD_NUMBER} -Dsonar.projectKey=SJMA -Dsonar.sources=src/main/ -Dsonar.tests=src/test/ -Dsonar.language=java -Dsonar.java.binaries=."
                    }
                 }
                 timeout(time: 10, unit: 'MINUTES') {
