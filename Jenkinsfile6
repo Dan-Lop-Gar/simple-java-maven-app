@@ -38,19 +38,31 @@ pipeline {
                 }
             }
         }
-        stage('Sonar Scanner') {
+        stage('Sonarqube') {
+            environment {
+                scannerHome = tool 'sonar'
+            }
             steps {
-                script {
-                  def sonarqubeScannerHome = tool name: 'sonar', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-                  withCredentials([string(credentialsId: 'sonar', variable: 'sonarLogin')]) {
-                    sh "${sonarqubeScannerHome}/bin/sonar-scanner -e -Dsonar.host.url=http://localhost:9000 -Dsonar.login=${sonarLogin} -Dsonar.projectName=simple-java-maven-app -Dsonar.projectVersion=${env.BUILD_NUMBER} -Dsonar.projectKey=SJMA -Dsonar.sources=src/main/ -Dsonar.tests=src/test/ -Dsonar.language=java -Dsonar.java.binaries=."
-                    timeout(time: 10, unit: 'MINUTES') {
-                      waitForQualityGate abortPipeline: true
-                    }
-                  }
+                withSonarQubeEnv('sonarQubeInt') {
+                    sh "${scannerHome}/bin/sonar-scanner \
+                    -Dsonar.projectKey=SJMA:Test \
+                    -Dsonar.projectName=simple-java-maven-app \
+                    -Dsonar.projectVersion=0.0.${env.BUILD_NUMBER} \
+                    -Dsonar.host.url=http://localhost:9000 \
+                    -Dsonar.sources=src/main/ \
+                    -Dsonar.tests=src/test/  \
+                    -Dsonar.language=java \
+                    -Dsonar.java.binaries=. \
+                    -Dsonar.login=admin \
+                    -Dsonar.password=admin
+                    "
+                }
+                timeout(time: 10, unit: 'MINUTES') {
+                    //waitForQualityGate abortPipeline: true
+                    waitForQualityGate abortPipeline: qualityGateValidation(waitForQualityGate())
                 }
             }
-        }
+        } 
         stage('Docker Build & Push') {
           steps {
             script {  
