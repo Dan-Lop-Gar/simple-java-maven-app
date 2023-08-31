@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-java-maven-app-jenkis
+spec:
+  selector:
+   matchLabels:
+    app: simple-java-maven-app-jenkis
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: simple-java-maven-app-jenkis
+    spec:
+      containers:
+        - name: simple-java-maven-app-jenkis
+          image: danst21/mavenjenkins       
+          ports:
+            - containerPort: 8080
+              name: simplejavamavenappport
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: simple-java-maven-app-service-jenkis
+  labels:
+    app: simple-java-maven-app-jenkis
+spec:   
+  ports:
+  - name: simple-java-maven-app-jenkis
+    port: 8080
+    nodePort : 31780 
+  #type: LoadBalancer
+  type: NodePort
+  selector:
+   app: simple-java-maven-app-jenkis
