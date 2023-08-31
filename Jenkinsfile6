@@ -55,7 +55,7 @@ pipeline {
                       sh "${scannerHome}/bin/sonar-scanner -e -Dsonar.host.url=http://localhost:9000 -Dsonar.login=${sonarLogin} -Dsonar.projectName=simple-java-maven-app -Dsonar.projectVersion=${env.BUILD_NUMBER} -Dsonar.projectKey=SJMA -Dsonar.sources=src/main/ -Dsonar.tests=src/test/ -Dsonar.language=java -Dsonar.java.binaries=."
                    }
                 }
-                timeout(time: 10, unit: 'MINUTES') {
+                timeout(time: 2, unit: 'MINUTES') {
                     //waitForQualityGate abortPipeline: true
                     waitForQualityGate abortPipeline: qualityGateValidation(waitForQualityGate())
                 }
